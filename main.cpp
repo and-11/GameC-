@@ -7,6 +7,18 @@
 
 #include <random>
 #include <climits>
+
+#include <cstdlib>
+
+void clear_window()
+{
+    #ifdef _WIN32
+        system("cls"); // Windows
+    #else
+        system("clear"); // Unix/Linux/macOS
+    #endif
+}
+
 int getRandomNumber() {
     
     int low = 1, high = INT_MAX;
@@ -16,6 +28,19 @@ int getRandomNumber() {
     std::uniform_int_distribution<> distr(low, high);
     return distr(gen);
 }
+
+class MyException : public std::exception
+{
+private:
+	std::string message;
+
+public:
+	MyException(const std::string& s) : message{ s } {}
+
+	const char* what() const throw() override {
+		return this->message.c_str();
+	}
+};
 
 
 class Entity{
@@ -48,7 +73,7 @@ public:
         return current_health > 0;
     }
     friend std::ostream& operator<<(std::ostream& os,const Entity& dude) {
-        os << "[ " << dude.name << " dmg:" << dude.current_damage << " hp:" << dude.current_health <<" ]";
+        os << dude.name << " dmg:" << dude.current_damage << " hp:" << dude.current_health ;
         return os;
     }
     void Ready()
@@ -92,25 +117,48 @@ public:
     Goblin(int level) : Entity( level, 4 , 5 , "GOBLIN" , 3 , 1)
     {}
 
+};    
+class Item{
+public:
+    virtual void Description() = 0;
 };
 
+
+class Potion: public Item{
+private:    
+    int damage_increase,health_increase;
+public:    
+    void Use( Player & dude )
+    {
+        dude.current_damage += damage_increase;
+        dude.current_health += health_increase;
+    }    
+    Potion() : damage_increase{0} , health_increase{0} 
+    {}
+    Potion(int damage_i,int health_i) : damage_increase{damage_i} , health_increase{health_i} 
+    {}
+    friend std::ostream& operator<<(std::ostream& os,const Potion& pot) {
+        os << pot.damage_increase << "dmg " << pot.health_increase << "hp";
+        return os;
+    }    
+    
+};    
+
 class Player: public Entity{
-private:
+private:    
 public:
     Player()
     {
         std::cerr << "You did not set stats for a Player!!\n";
-    }
+    }    
     Player(int damage,int health,std::string name,int c_damage,int c_health) : 
         Entity( 1, damage, health, name , c_damage, c_health )
     {
         player =1;
-    }
-};
+    }    
+    friend Potion;
+};    
 
-class Item{
-
-};
 
 class Game{
 private:
@@ -129,10 +177,13 @@ public:
     void show_players()
     {
         int ct = 0;
-        std::cout << "Heroes\n";
+        std::cout << "\033[32m";
+        if( count_players() > 0 )
+            std::cout << "Heroes\n";
         for(auto x:entities)
         if( x->is_alive() and x->is_player() )
                 std::cout << "#" << (++ct) << " " << (*x) << "\n";   
+        std::cout << "\033[0m"; /// color
     }
     int count_players()
     {
@@ -145,10 +196,13 @@ public:
     void show_enemies()
     {
         int ct = 0;
-        std::cout << "Enemies\n";
+        std::cout << "\033[31m"; /// color
+        if( count_enemies() > 0 )
+            std::cout << "Enemies\n";
         for(auto x:entities)
             if( x->is_alive() and !x->is_player() )
-                std::cout  << "#" << (++ct) << *x << "\n";
+                std::cout  << "#" << (++ct) << " " << *x << "\n";
+        std::cout << "\033[0m"; /// color
     }
     int count_enemies()
     {
@@ -179,6 +233,9 @@ public:
         for(auto x:entities)
             if( x->is_alive() and !x->is_player() )    
             {
+                if( count_players() == 0 )
+                    break;
+
                 int who = getRandomNumber() % count_players() + 1 ;
                 int ct=0;
                 for(auto y:entities) 
@@ -197,62 +254,105 @@ public:
     {
         if( !count_enemies() )
         {
-            std::cout << "YOU WON!\n";
+            std::cout << "\033[1;35m" << "YOU WON!\n" << "\033[0m";
             return 1;
         }
         else if( !count_players() )
         {
-            std::cout << "YOU LOST!\n";
+            std::cout << "\033[33m" << "YOU LOST!\n" << "\033[0m";
             return 1;
         }
         return 0;
     }
+    void player_turn()
+    {
+        for(auto x:entities)
+        {
+            if( count_enemies() == 0 )
+                break;
 
+            if( x->is_alive() and x->is_player() )    
+            {
+                std::cout << "Chose an enemy for " << "\033[32m" << x->get_name() << "\033[0m" << " to atack:\n";
+                show_enemies();
+                int n = count_enemies();
+                
+                while( 1 )
+                {
+                    
+                    int option;
+                    std::cin >> option;
+                    
+                    try{
+                        if( 0<option and option<=n )
+                        {
+                            int ct =0;
+                            for(auto y:entities) 
+                            if( y->is_alive() and !y->is_player() )
+                            {
+                                ct++;
+                                if( ct == option )
+                                {
+                                    attack( x,y );
+                                    break;
+                                }
+                            }
+                            break;
+                        } 
+                        else 
+                        throw MyException( "Invalid input!!\n" );
+                    }
+                    catch( MyException &e ){
+                        std::cout << e.what();
+                    }
+                }
+            }
+            
+        }
+    }
 };
 
-class MyException : public std::exception
-{
-private:
-	std::string message;
 
-public:
-	MyException(const std::string& s) : message{ s } {}
-
-	const char* what() const throw() override {
-		return this->message.c_str();
-	}
-};
 
 void Play_the_game()
 {
     Game level;
     // Entity *x = new Player( 5,10,"Cosmin",2,2 );
     
-    std::shared_ptr<Entity> x = std::make_shared<Player>( 5,100,"Cosmin",2,2 ) ;
-    level.add_creature( x );
-    x= std::make_shared<Player>( 1,40,"Victor",1,1 );
-    level.add_creature( x );
-    x= std::make_shared<Player>( 2,70,"Pictor",1,1 );
+    std::shared_ptr<Entity> x = std::make_shared<Player>( 5,1,"Cosmin",2,2 ) ;
+    // level.add_creature( x );
+    // x= std::make_shared<Player>( 1,3,"Victor",1,1 );
+    // level.add_creature( x );
+    x= std::make_shared<Player>( 2,5,"Pictor",1,1 );
     level.add_creature( x );
 
 
-    x= std::make_shared<Goblin>( 1 );
+    x= std::make_shared<Goblin>( 2 );
     level.add_creature( x );
-    // x= std::make_shared<Goblin>( 4 );
-    // level.add_creature( x );
-    // x= std::make_shared<Goblin>( 2 );
-    // level.add_creature( x );
+    x= std::make_shared<Goblin>( 4 );
+    level.add_creature( x );
+    x= std::make_shared<Goblin>( 2 );
+    level.add_creature( x );
 
 
     level.prepare_fight();
 
-    level.show_status();
+    while( !level.is_over() )
+    {
+        
+            level.player_turn();
+            level.enemy_turn();
 
-    std::cout <<"\n";
-    level.enemy_turn();
-    std::cout <<"\n";
-    level.show_status();
+            std::cout <<"--------\n";
+            level.show_status();
+
+            std::cout <<"--------\n";
+    }
+
+    
+
 }
+
 
 int main()
 {
@@ -282,3 +382,10 @@ int main()
     //     }
     // }
 }
+
+
+
+
+
+
+/// maybe make the color as a static atribute ?
