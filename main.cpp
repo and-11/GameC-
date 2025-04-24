@@ -3,6 +3,8 @@
 #include <vector>
 #include <memory>
 
+#include <cctype>
+
 #include <random>
 #include <climits>
 int getRandomNumber() {
@@ -208,7 +210,20 @@ public:
 
 };
 
-int main()
+class MyException : public std::exception
+{
+private:
+	std::string message;
+
+public:
+	MyException(const std::string& s) : message{ s } {}
+
+	const char* what() const throw() override {
+		return this->message.c_str();
+	}
+};
+
+void Play_the_game()
 {
     Game level;
     // Entity *x = new Player( 5,10,"Cosmin",2,2 );
@@ -237,6 +252,33 @@ int main()
     level.enemy_turn();
     std::cout <<"\n";
     level.show_status();
-    
+}
 
+int main()
+{
+    // std::cout << "WELCOME!\npress:\n S -to start\n Q - to quit\n";
+    // while( 1 )
+    // {
+    //     std::string input_string;
+    //     std::cin >> input_string;
+    //     char option = input_string[0];
+    //     option = std::tolower( option );    
+
+    //     try{
+    //         if( option == 's' and input_string.size()==1  )
+    //         {
+                Play_the_game();
+    //             break;
+    //         } 
+    //         else if( option == 'q' and input_string.size()==1 )
+    //         {
+    //             break;
+    //         }
+    //         else 
+    //             throw MyException( "Invalid input!!\n" );
+    //     }
+    //     catch( MyException &e ){
+    //         std::cout << e.what();
+    //     }
+    // }
 }
