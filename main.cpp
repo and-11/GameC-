@@ -90,10 +90,12 @@ class Item{
 
 };
 
-class game{
+class Game{
+
     std::vector<Entity> entities;
     std::vector<Item> items;
 
+public:
 
     bool is_over()
     {
@@ -127,14 +129,55 @@ class game{
     {
         items.push_back(it);
     }
+    void show_players()
+    {
+        int ct = 0;
+        std::cout << "Heroes\n";
+        for(auto x:entities)
+        // if( x.is_alive() and x.is_player() )
+        {
+                std::cout << "#" << (++ct) << " " << x << "\n";   
+                std::cout << x.is_alive() << " " << x.is_player();
+
+            }
+    }
+    void show_enemies()
+    {
+        int ct = 0;
+        std::cout << "Enemies\n";
+        for(auto x:entities)
+            if( x.is_alive() and !x.is_player() )
+                std::cout  << "#" << (++ct) << x << "\n";
+    }
+    void show_status()
+    {
+        // std::cout << entities.size();
+        show_players();
+        show_enemies();
+    }
+    void prepare_fight()
+    {
+        for(auto x:entities)
+        {
+            x.Ready();
+
+            std::cout << x; 
+        }
+    }
 };
 
 int main()
 {
-    Goblin alex(3);
-    // alex.showInformations();
-    std::cout << alex << " " << alex;
+    Game level;
+    Entity *x = new Player( 5,10,"Cosmin",2,2 );
+    
+    level.add_creature( *x );
 
+    level.prepare_fight();
+
+    level.show_players();
+
+    //  Player( 1,4,"Victor",1,1 );
 
 
 
