@@ -1,6 +1,20 @@
 #include <iostream>
 
 #include <vector>
+#include <memory>
+
+#include <random>
+#include <climits>
+int getRandomNumber() {
+    
+    int low = 1, high = INT_MAX;
+    
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distr(low, high);
+    return distr(gen);
+}
+
 
 class Entity{
 private:
@@ -48,6 +62,14 @@ public:
     {
         return player;
     }
+    int get_damage()
+    {
+        return current_damage;
+    }
+    void recive_damage(int value)
+    {
+        current_health -= value;
+    }
     // virtual void set_Coeficients() =0;
 
 
@@ -82,8 +104,6 @@ public:
     {
         player =1;
     }
-    
-
 };
 
 class Item{
@@ -91,41 +111,16 @@ class Item{
 };
 
 class Game{
-
-    std::vector<Entity> entities;
-    std::vector<Item> items;
+private:
+    std::vector< std::shared_ptr<Entity> > entities;
+    std::vector< std::shared_ptr<Item> > items;
 
 public:
-
-    bool is_over()
+    void add_creature( std::shared_ptr<Entity> dude )
     {
-        int creatures[2];
-        creatures[0] = creatures[1] = 0;
-
-        for(auto x:entities)
-        {
-            if( x.is_alive() )
-            {
-                creatures[ x.is_player() ]++;
-            }
-        }
-        if( !creatures[ 0 ] )
-        {
-            std::cout << "YOU WON!\n";
-            return 1;
-        }
-        else if( !creatures[ 1 ] )
-        {
-            std::cout << "YOU LOST!\n";
-            return 1;
-        }
-        return 0;
+        entities.push_back( dude );
     }
-    void add_creature(const Entity& dude )
-    {
-        entities.push_back(dude);
-    }
-    void add_item(const Item& it )
+    void add_item( std::shared_ptr<Item> it )
     {
         items.push_back(it);
     }
@@ -134,24 +129,35 @@ public:
         int ct = 0;
         std::cout << "Heroes\n";
         for(auto x:entities)
-        // if( x.is_alive() and x.is_player() )
-        {
-                std::cout << "#" << (++ct) << " " << x << "\n";   
-                std::cout << x.is_alive() << " " << x.is_player();
-
-            }
+        if( x->is_alive() and x->is_player() )
+                std::cout << "#" << (++ct) << " " << (*x) << "\n";   
+    }
+    int count_players()
+    {
+        int ct = 0;
+        for(auto x:entities)
+            if( x->is_alive() and x->is_player() )
+                ct++;
+        return ct;
     }
     void show_enemies()
     {
         int ct = 0;
         std::cout << "Enemies\n";
         for(auto x:entities)
-            if( x.is_alive() and !x.is_player() )
-                std::cout  << "#" << (++ct) << x << "\n";
+            if( x->is_alive() and !x->is_player() )
+                std::cout  << "#" << (++ct) << *x << "\n";
+    }
+    int count_enemies()
+    {
+        int ct = 0;
+        for(auto x:entities)
+            if( x->is_alive() and !x->is_player() )
+                ct++;
+        return ct;   
     }
     void show_status()
     {
-        // std::cout << entities.size();
         show_players();
         show_enemies();
     }
@@ -159,26 +165,78 @@ public:
     {
         for(auto x:entities)
         {
-            x.Ready();
-
-            std::cout << x; 
+            x->Ready();
         }
     }
+    void attack( std::shared_ptr<Entity> a , std::shared_ptr<Entity> b )  ///     a il ataca pe B!
+    {
+        b->recive_damage( a->get_damage() );
+    }
+    void enemy_turn()
+    {
+        for(auto x:entities)
+            if( x->is_alive() and !x->is_player() )    
+            {
+                int who = getRandomNumber() % count_players() + 1 ;
+                int ct=0;
+                for(auto y:entities) 
+                    if( y->is_alive() and y->is_player() )
+                    {
+                        ct++;
+                        if( ct == who )
+                        {
+                            attack( x,y );
+                            break;
+                        }
+                    }
+            }
+    }
+    bool is_over()
+    {
+        if( !count_enemies() )
+        {
+            std::cout << "YOU WON!\n";
+            return 1;
+        }
+        else if( !count_players() )
+        {
+            std::cout << "YOU LOST!\n";
+            return 1;
+        }
+        return 0;
+    }
+
 };
 
 int main()
 {
     Game level;
-    Entity *x = new Player( 5,10,"Cosmin",2,2 );
+    // Entity *x = new Player( 5,10,"Cosmin",2,2 );
     
-    level.add_creature( *x );
+    std::shared_ptr<Entity> x = std::make_shared<Player>( 5,100,"Cosmin",2,2 ) ;
+    level.add_creature( x );
+    x= std::make_shared<Player>( 1,40,"Victor",1,1 );
+    level.add_creature( x );
+    x= std::make_shared<Player>( 2,70,"Pictor",1,1 );
+    level.add_creature( x );
+
+
+    x= std::make_shared<Goblin>( 1 );
+    level.add_creature( x );
+    // x= std::make_shared<Goblin>( 4 );
+    // level.add_creature( x );
+    // x= std::make_shared<Goblin>( 2 );
+    // level.add_creature( x );
+
 
     level.prepare_fight();
 
-    level.show_players();
+    level.show_status();
 
-    //  Player( 1,4,"Victor",1,1 );
-
-
+    std::cout <<"\n";
+    level.enemy_turn();
+    std::cout <<"\n";
+    level.show_status();
+    
 
 }
