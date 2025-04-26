@@ -83,7 +83,13 @@ public:
     }
     std::string get_name()
     {
-        return name;
+        std::string ans,beg,end="\033[0m";
+        if( is_player() )
+            beg = "\033[32m";
+        else 
+            beg = "\033[31m";
+        ans = beg+name+end;
+        return ans;
     }
     bool is_player()
     {
@@ -93,6 +99,16 @@ public:
     {
         return current_damage;
     }
+    std::string show_damage()
+    {
+        std::string ans,beg,end="dmg\033[0m";
+        if( is_player() )
+            beg = "\033[32m";
+        else 
+            beg = "\033[31m";
+        ans = beg+std::to_string(current_damage)+end;
+        return ans;
+    }
     void recive_damage(int value)
     {
         current_health -= value;
@@ -100,7 +116,7 @@ public:
     // virtual void set_Coeficients() =0;
 
 
-    ///             A PUREE VIRTUAL FUNCTIOONNN
+    //             A PUREE VIRTUAL FUNCTIOONNN
 };
 
 class Goblin: public Entity {
@@ -125,22 +141,22 @@ public:
 
 
 class Potion: public Item{
-private:    
-    int damage_increase,health_increase;
-public:    
-    void Use( Player & dude )
-    {
-        dude.current_damage += damage_increase;
-        dude.current_health += health_increase;
-    }    
-    Potion() : damage_increase{0} , health_increase{0} 
-    {}
-    Potion(int damage_i,int health_i) : damage_increase{damage_i} , health_increase{health_i} 
-    {}
-    friend std::ostream& operator<<(std::ostream& os,const Potion& pot) {
-        os << pot.damage_increase << "dmg " << pot.health_increase << "hp";
-        return os;
-    }    
+// private:    
+//     int damage_increase,health_increase;
+// public:    
+//     void Use( Player & dude )
+//     {
+//         dude.current_damage += damage_increase;
+//         dude.current_health += health_increase;
+//     }    
+//     Potion() : damage_increase{0} , health_increase{0} 
+//     {}
+//     Potion(int damage_i,int health_i) : damage_increase{damage_i} , health_increase{health_i} 
+//     {}
+//     friend std::ostream& operator<<(std::ostream& os,const Potion& pot) {
+//         os << pot.damage_increase << "dmg " << pot.health_increase << "hp";
+//         return os;
+//     }    
     
 };    
 
@@ -227,6 +243,7 @@ public:
     void attack( std::shared_ptr<Entity> a , std::shared_ptr<Entity> b )  ///     a il ataca pe B!
     {
         b->recive_damage( a->get_damage() );
+        std::cout << a->get_name() << " attacked " << b->get_name() << " for " << a->show_damage() << "\n";
     }
     void enemy_turn()
     {
@@ -273,7 +290,7 @@ public:
 
             if( x->is_alive() and x->is_player() )    
             {
-                std::cout << "Chose an enemy for " << "\033[32m" << x->get_name() << "\033[0m" << " to atack:\n";
+                std::cout << "Chose an enemy for " << x->get_name() << " to atack:\n";
                 show_enemies();
                 int n = count_enemies();
                 
@@ -319,12 +336,12 @@ void Play_the_game()
     Game level;
     // Entity *x = new Player( 5,10,"Cosmin",2,2 );
     
-    std::shared_ptr<Entity> x = std::make_shared<Player>( 5,1,"Cosmin",2,2 ) ;
-    // level.add_creature( x );
-    // x= std::make_shared<Player>( 1,3,"Victor",1,1 );
-    // level.add_creature( x );
-    x= std::make_shared<Player>( 2,5,"Pictor",1,1 );
+    std::shared_ptr<Entity> x = std::make_shared<Player>( 500,100,"Aurel",2,2 ) ;
     level.add_creature( x );
+    // x= std::make_shared<Player>( 1,3,"Delia",1,1 );
+    // level.add_creature( x );
+    // x= std::make_shared<Player>( 2,5,"Maria_t",1,1 );
+    // level.add_creature( x );
 
 
     x= std::make_shared<Goblin>( 2 );
@@ -335,7 +352,13 @@ void Play_the_game()
     level.add_creature( x );
 
 
+    
     level.prepare_fight();
+
+    std::cout <<"\n--------\n";
+    level.show_status();
+    std::cout <<"--------\n\n";
+
 
     while( !level.is_over() )
     {
@@ -343,10 +366,9 @@ void Play_the_game()
             level.player_turn();
             level.enemy_turn();
 
-            std::cout <<"--------\n";
+            std::cout <<"\n--------\n";
             level.show_status();
-
-            std::cout <<"--------\n";
+            std::cout <<"--------\n\n";
     }
 
     
