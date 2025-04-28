@@ -21,7 +21,6 @@ class Game{
         {
             entities.push_back( dude );
         }
-
         void game_transfer( Game&next_level )
         {
             for( auto x:entities )
@@ -31,7 +30,6 @@ class Game{
             for( auto x:items )                                     /// MAYBE TEST
                 next_level.add_item( x );
         }
-
         void add_item( std::shared_ptr<Item> it )
         {
             items.push_back(it);
@@ -98,6 +96,16 @@ class Game{
         {
             b->recive_damage( a->get_damage() );
             std::cout << a->get_name() << " attacked " << b->get_name() << " for " << a->show_damage() << "\n";
+        }
+        int count_items()
+        {
+            return items.size();
+        }
+        std::shared_ptr<Item> get_xth_item(int ct)
+        {
+            if( ct<0 or ct>count_items() )
+                throw MyException("there is no #"+std::to_string(ct)+" item");
+            return items[ct-1];
         }
         std::shared_ptr<Entity> get_xth_enemy(int ct)
         {
@@ -176,12 +184,12 @@ class Game{
             try{
                 int ct = 0;
                 for(auto x:entities)
-                if( x->is_alive() and x->is_player() )
-                {
-                    ct++;
-                    if( ct==i )
-                    return x->get_name();
-                }   
+                    if( x->is_alive() and x->is_player() )
+                    {
+                        ct++;
+                        if( ct==i )
+                        return x->get_name();
+                    }   
                 throw MyException("th_player_name -> THERE ARE NOT ENOUGH PLAYERS");
             }
             catch( MyException& e  )
@@ -189,6 +197,13 @@ class Game{
                 return e.what();
             }
         }
-        
+        void count_item_use_enemy(std::shared_ptr<Item> i,int ct_enemy)
+        {
+            i->use( *get_xth_enemy(ct_enemy) );
+        }
+        void count_item_use_player(std::shared_ptr<Item> i,int ct_player)
+        {
+            i->use( *get_xth_player(ct_player) );
+        }
     };
 

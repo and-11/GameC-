@@ -22,9 +22,17 @@ void Play_the_game()
     
     level.add_creature( x );
     
+
     
-    // std::shared_ptr<Item> y = std::make_shared<Potion>( 110,10000,"KING",2,2 )
-    // level.add_item( y );
+    std::shared_ptr<Item> y = std::make_shared<Potion>( "Healing",-1,25 );
+    level.add_item( y );
+
+    y = std::make_shared<Potion>( "Lightning",0,-100 );
+    level.add_item( y );
+
+
+    y = std::make_shared<Potion>( "Increase_stats",4,4 );
+    level.add_item( y );
 
     // x= std::make_shared<Player>( 1,1000,"Flavius",1,1 );
     // level.add_creature( x );
@@ -66,6 +74,7 @@ void Play_the_game()
 
 int main()
 {
+    
     // std::cout << "WELCOME!\npress:\n S -to start\n Q - to quit\n";
     // while( 1 )
     // {
@@ -82,6 +91,7 @@ int main()
     //         } 
     //         else if( option == 'q' and input_string.size()==1 )
     //         {
+                // quit
     //             break;
     //         }
     //         else 

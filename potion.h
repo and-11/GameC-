@@ -9,10 +9,12 @@ class Potion: public Item{
 private:    
     int damage_increase,health_increase;
 public:    
-    void use( Entity & dude )
+    void use( Entity & dude ) override
     {
         dude.current_damage += damage_increase;
         dude.current_health += health_increase;
+        std::cout << get_name() << " used on " << dude.get_name() << "\n";
+        std::cout << dude << "\n";
     }    
     Potion() : damage_increase{0} , health_increase{0} 
     {}
