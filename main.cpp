@@ -21,6 +21,11 @@ void Play_the_game()
     std::shared_ptr<Entity> x = std::make_shared<Player>( 110,10000,"KING",2,2 ) ;
     
     level.add_creature( x );
+    
+    
+    // std::shared_ptr<Item> y = std::make_shared<Potion>( 110,10000,"KING",2,2 )
+    // level.add_item( y );
+
     // x= std::make_shared<Player>( 1,1000,"Flavius",1,1 );
     // level.add_creature( x );
     // x= std::make_shared<Player>( 2,500,"Maria_t",1,1 );
@@ -104,3 +109,6 @@ int main()
 
 // make entity a virtual void set_Coeficients() =0;
     //             A PUREE VIRTUAL FUNCTIOONNN
+
+
+    // add const at functions and variables

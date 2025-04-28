@@ -48,10 +48,44 @@ public:
             }
         }
     }
+    bool chose_item( Game *current_level )
+    {
+        return 1;
+    }
     void chose_action( Game *current_level )
     {
-        attack(current_level);
+        std::cout << "\nPress 1 to attack or press 2 to use an item:\n";
+        while( 1 )
+        {
+            try{
+                int option;
+                std::cin >> option;
 
+                if (std::cin.fail()) {
+                    std::cin.clear(); 
+                    std::cin.ignore(10000, '\n'); // discard invalid input
+                    throw MyException("Invalid input!");
+                }                                             //// daca coteste litere da fail si nu mai colaboreaza
+                      
+                if( option == 1 )                
+                {
+                    attack(current_level);
+                    break;
+                }
+                else if( option == 2 )
+                {
+                    if( chose_item( current_level ) )
+                        break;
+                    else 
+                        continue;
+                }
+                throw MyException( "Invalid input!" );
+            }
+            catch( MyException&e )
+            {
+                std::cout << e.what() << "\n";
+            }
+        }
     }
     void start()
     {

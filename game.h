@@ -44,7 +44,7 @@ class Game{
                 std::cout << "Heroes\n";
             for(auto x:entities)
             if( x->is_alive() and x->is_player() )
-                    std::cout << "#" << (++ct) << " " << (*x) << "\n";   
+                std::cout << "#" << (++ct) << " " << (*x) << "\n";   
             std::cout << "\033[0m"; /// color
         }
         int count_players()
@@ -80,6 +80,12 @@ class Game{
             show_players();
             show_enemies();
             std::cout <<"--------\n";
+        }
+        void show_items()
+        {
+            int ct = 0 ;
+            for(auto x:items)
+                std::cout << "\033[36m#" << ++ct << " " << (*x) << "\n";
         }
         void prepare_fight()
         {
