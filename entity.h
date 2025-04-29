@@ -37,7 +37,13 @@ public:
         return current_health > 0;
     }
     friend std::ostream& operator<<(std::ostream& os,const Entity& dude) {
-        os << dude.name << " dmg:" << dude.current_damage << " hp:" << dude.current_health ;
+        std::string ans,beg,end="\033[0m";
+        if( dude.is_player() )
+            beg = "\033[32m";
+        else 
+            beg = "\033[31m";
+        ans = beg+ std::to_string(dude.get_name()) + " dmg:" + std::to_string(dude.current_damage) + " hp:" + std::to_string(dude.current_health) +end;
+        os << ans;      /// fix
         return os;
     }
     void Ready()
