@@ -18,5 +18,6 @@ class Player: public Entity{
         {
             player =1;
         }    
+
     };    
     

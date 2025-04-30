@@ -33,7 +33,7 @@ int get_numeric_input()
             if (std::cin.fail()) {
                 std::cin.clear(); 
                 std::cin.ignore(10000, '\n'); // discard invalid input
-                throw MyException("Input must be numeric!");
+                throw Input_NAN();
             }     //// daca coteste litere da fail si nu mai colaboreaza
             break;
         }

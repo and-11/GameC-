@@ -43,7 +43,24 @@ public:
             }
         }
     }
-    
+    void see_detail(Game *current_level)
+    {
+        std::cout << "Chose an enmy to view details about him:\n";
+        current_level->show_enemies();
+
+        while( 1 )
+        {
+            try{
+                int option = get_numeric_input();
+                                            
+                current_level->show_enemy_details( option );
+                break;   
+            }  
+            catch( MyException &e ){
+                std::cout << e.what() << "\n";
+            }
+        }
+    }
     bool chose_item( Game *current_level )
     {
         current_level->show_items();
@@ -129,7 +146,7 @@ public:
     }
     void chose_action( Game *current_level )
     {
-        std::cout << "\nPress 1 to attack or press 2 to use an item:\n";
+        std::cout << "\nPress 1 to attack or press 2 to use an item or press 3 to see detail about the enemyes:\n";
         while( 1 )
         {
             try{
@@ -146,6 +163,12 @@ public:
                         break;
                     else 
                         continue;
+                }
+                else if( option == 3 )
+                {
+                    see_detail( current_level );
+                    std::cout << "\nPress 1 to attack or press 2 to use an item or press 3 to see detail about the enemyes:\n";
+                    continue;
                 }
                 throw Input_Invalid();
             }

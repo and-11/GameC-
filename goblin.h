@@ -1,21 +1,15 @@
 #pragma once
 
 #include "libraryes.h"
+#include "enemy.h"
 
-#include "entity.h"
-
-class Goblin: public Entity {
+class Goblin: public Enemy {
     private:
     
     public:
-        static void showInformations() {
+        void show_informations() override{
             std::cout<<"The goblin - we don't know mutch about the goblin. He is a green dude that is low in healt but has high damage! Be careful the Goblin's damage scales well with his level.\n";
         }
-        Goblin()
-        {
-            std::cerr << "You did not set a level for a Goblin!!\n";
-        }
-        Goblin(int level) : Entity( level, 4 , 5 , "GOBLIN" , 3 , 1)
+        Goblin(int level) : Enemy( level, 4 , 5 , "GOBLIN" , 3 , 1) 
         {}
-    
-    };    
+};    

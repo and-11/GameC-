@@ -51,31 +51,13 @@ void Play_the_game()
     // level.add_creature( x );
     
     jocc.start();
-
-
-
-    
-
-    // while( !level.is_over() )
-    // {
-        
-    //         level.player_turn();
-    //         level.enemy_turn();
-
-    //         std::cout <<"\n--------\n";
-    //         level.show_status();
-    //         std::cout <<"--------\n\n";
-    // }
-
-    
-
 }
 
 
 int main()
 {
     
-    // std::cout << "WELCOME!\npress:\n S -to start\n Q - to quit\n";
+    // std::cout << "WELCOME!\npress: S -to start or Q - to quit\n";
     // while( 1 )
     // {
     //     std::string input_string;
@@ -86,16 +68,15 @@ int main()
     //     try{
     //         if( option == 's' and input_string.size()==1  )
     //         {
-                Play_the_game();
+                // Play_the_game();
     //             break;
     //         } 
     //         else if( option == 'q' and input_string.size()==1 )
     //         {
-                // quit
     //             break;
     //         }
     //         else 
-    //             throw MyException( "Invalid input!!\n" );
+    //             throw Input_Invalid();
     //     }
     //     catch( MyException &e ){
     //         std::cout << e.what();
@@ -110,14 +91,10 @@ int main()
 
 /// maybe make the color as a static atribute ?
 
+
 /// clear window 
 
-/// make typical_errors     NANA to low to high
 
 /// break code into pieces
-
-
-// make entity a virtual void set_Coeficients() =0;
-    //             A PUREE VIRTUAL FUNCTIOONNN
 
 // add const at functions and variables

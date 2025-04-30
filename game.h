@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "item.h"
 #include "exception.h"
+#include "enemy.h"
 
 class Game{
     private:
@@ -103,8 +104,10 @@ class Game{
         }
         std::shared_ptr<Item> get_xth_item(int ct)
         {
-            if( ct<0 or ct>count_items() )
-                throw MyException("there is no #"+std::to_string(ct)+" item");
+            if( ct<1 )
+                throw Input_too_low();
+            if( ct>count_items() )
+                throw Input_too_high();
             return items[ct-1];
         }
         std::shared_ptr<Entity> get_xth_enemy(int ct)
@@ -118,7 +121,14 @@ class Game{
                         return x;
                 }
             std::string msg = "THERE IS NO ENEMY #" + std::to_string(og_ct) ;
-            throw MyException( msg );
+
+            // throw Input_Invalid();
+            
+            if( ct < 1 )
+                throw Input_too_low();
+            else 
+                throw Input_too_high();
+
 
             std::shared_ptr<Entity> err ;
             return err;
@@ -189,13 +199,26 @@ class Game{
                         ct++;
                         if( ct==i )
                         return x->get_name();
-                    }   
-                throw MyException("th_player_name -> THERE ARE NOT ENOUGH PLAYERS");
+                    }
+
+                throw Input_Invalid(); 
             }
             catch( MyException& e  )
             {
                 return e.what();
             }
+        }
+        void show_enemy_details(int ct)
+        {
+            std::shared_ptr<Entity> ent = get_xth_enemy(ct);
+            std::shared_ptr<Enemy> ene = std::dynamic_pointer_cast< Enemy >( ent );
+            try{
+                ene->show_informations();
+                throw Input_Invalid();
+            }
+            catch(MyException&e){
+                e.what();
+            }            
         }
         void count_item_use_enemy(std::shared_ptr<Item> i,int ct_enemy)
         {

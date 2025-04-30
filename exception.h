@@ -8,35 +8,31 @@ public:
 	virtual const char* what() const throw() override = 0;
 };
 
-class Input_NAN: public std::exception
+class Input_NAN: public MyException
 {
 public:
 	const char* what() const throw() override {
-		std::string msg = "Input must be numeric!";
-		return msg.c_str();
+		return "Input must be numeric!";
 	}
 };
-class Input_too_low: public std::exception
+class Input_too_low: public MyException
 {
 public:
 	const char* what() const throw() override {
-		std::string msg = "Value is too low!";
-		return msg.c_str();
+		return "Value is too low!";
 	}
 };
-class Input_High: public std::exception
+class Input_too_high: public MyException
 {
 public:
 	const char* what() const throw() override {
-		std::string msg = "Input is too high!";
-		return msg.c_str();
+		return "Input is too high!";				
 	}
 };
-class Input_Invalid: public std::exception
+class Input_Invalid: public MyException
 {
 public:
 	const char* what() const throw() override {
-		std::string msg = "Input is invalid!";
-		return msg.c_str();
+		return "Invalid input!";
 	}
 };

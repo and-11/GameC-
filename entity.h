@@ -74,17 +74,16 @@ public:
         current_health -= value;
     }
     friend std::ostream& operator<<(std::ostream& os,const Entity & dude) {
-        std::string ans,beg,end="\033[0m",dmg = " dmg:",hp =" hp:";
+        std::string ans,beg,end="\033[0m",dmg = " dmg:",hp =" hp:",lvl = " lvl:";
         if( dude.is_player() )
             beg = "\033[32m";
         else 
             beg = "\033[31m";
 
-        ans = beg+ dude.get_name() + dmg + std::to_string(dude.current_damage) + hp + std::to_string(dude.current_health) +end;
+        ans = beg+ dude.get_name() + lvl + std::to_string(dude.level) + dmg + std::to_string(dude.current_damage) + hp + std::to_string(dude.current_health) +end;
         os << ans;      /// fix
         return os;
-    }
-
+    }   
 
     friend Potion;
 };
