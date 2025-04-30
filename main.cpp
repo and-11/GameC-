@@ -112,13 +112,12 @@ int main()
 
 /// clear window 
 
+/// make typical_errors     NANA to low to high
 
-// ds as chose enemy -> break the game
-
+/// break code into pieces
 
 
 // make entity a virtual void set_Coeficients() =0;
     //             A PUREE VIRTUAL FUNCTIOONNN
 
-
-    // add const at functions and variables
+// add const at functions and variables

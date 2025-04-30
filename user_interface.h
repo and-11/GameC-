@@ -115,7 +115,8 @@ public:
                         }
                     }                    
                     break;
-                }              
+                }
+                throw Input_Invalid();              
             }
             catch( MyException&e )
             {
@@ -146,7 +147,7 @@ public:
                     else 
                         continue;
                 }
-                throw MyException( "Invalid input!" );
+                throw Input_Invalid();
             }
             catch( MyException&e )
             {

@@ -36,22 +36,12 @@ public:
     {
         return current_health > 0;
     }
-    friend std::ostream& operator<<(std::ostream& os,const Entity& dude) {
-        std::string ans,beg,end="\033[0m";
-        if( dude.is_player() )
-            beg = "\033[32m";
-        else 
-            beg = "\033[31m";
-        ans = beg+ std::to_string(dude.get_name()) + " dmg:" + std::to_string(dude.current_damage) + " hp:" + std::to_string(dude.current_health) +end;
-        os << ans;      /// fix
-        return os;
-    }
     void Ready()
     {
         current_damage = damage + coeficient_damage*level;
         current_health = health + coeficient_health*level;
     }
-    std::string get_name()
+    std::string get_name() const
     {
         std::string ans,beg,end="\033[0m";
         if( is_player() )
@@ -61,7 +51,7 @@ public:
         ans = beg+name+end;
         return ans;
     }
-    bool is_player()
+    bool is_player() const
     {
         return player;
     }
@@ -83,6 +73,18 @@ public:
     {
         current_health -= value;
     }
+    friend std::ostream& operator<<(std::ostream& os,const Entity & dude) {
+        std::string ans,beg,end="\033[0m",dmg = " dmg:",hp =" hp:";
+        if( dude.is_player() )
+            beg = "\033[32m";
+        else 
+            beg = "\033[31m";
+
+        ans = beg+ dude.get_name() + dmg + std::to_string(dude.current_damage) + hp + std::to_string(dude.current_health) +end;
+        os << ans;      /// fix
+        return os;
+    }
+
 
     friend Potion;
 };
